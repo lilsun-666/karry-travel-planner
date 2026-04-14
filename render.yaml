@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: travel-planner
+    env: node
+    buildCommand: npm install
+    startCommand: node backend/server.js
+    plan: free
+    healthCheckPath: /health
+    autoDeploy: true
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 3000
+    region: oregon

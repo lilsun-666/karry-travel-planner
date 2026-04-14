@@ -1,0 +1,2200 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <title>Karry旅行家 - 智能定制您的旅程</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            /* 主色调 - 柔和大地色系 */
+            --primary-color: #2D7A89;      /* 深青色 */
+            --primary-light: #4A9DAC;      /* 浅青色 */
+            --accent-color: #FF9B71;       /* 活力橙 */
+            --accent-hover: #FF8456;       
+            
+            /* 中性色 */
+            --text-primary: #2C3E50;       /* 深灰蓝 */
+            --text-secondary: #5A6C7D;     /* 中灰 */
+            --text-muted: #8B98A7;         /* 浅灰 */
+            
+            /* 背景色 */
+            --bg-primary: #FFFFFF;
+            --bg-secondary: #F8FAFB;       /* 极浅灰 */
+            --bg-card: #FFFFFF;
+            --bg-hover: #F3F5F7;
+            
+            /* 边框 */
+            --border-color: #E5E8EB;
+            --border-radius: 16px;
+            --border-radius-sm: 12px;
+            
+            /* 阴影 */
+            --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.04);
+            --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.08);
+            --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.12);
+            
+            /* 间距 */
+            --spacing-xs: 8px;
+            --spacing-sm: 12px;
+            --spacing-md: 16px;
+            --spacing-lg: 24px;
+            --spacing-xl: 32px;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 
+                         'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* ========== Header ========== */
+        .header {
+            background: var(--bg-primary);
+            padding: var(--spacing-lg) var(--spacing-md);
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.95);
+        }
+        
+        .header-content {
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        
+        .logo {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: var(--spacing-xs);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--spacing-sm);
+        }
+        
+        .logo-icon {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+        
+        .subtitle {
+            color: var(--text-secondary);
+            font-size: 15px;
+            font-weight: 400;
+        }
+        
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: linear-gradient(135deg, #FFE8E0, #FFD4C8);
+            color: #D85B3E;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-top: var(--spacing-sm);
+        }
+        
+        /* ========== Chat Container ========== */
+        .chat-container {
+            flex: 1;
+            max-width: 800px;
+            width: 100%;
+            margin: 0 auto;
+            padding: var(--spacing-xl) var(--spacing-md) 140px;
+            overflow-y: auto;
+        }
+        
+        .welcome-card {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+            color: white;
+            padding: var(--spacing-xl);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-md);
+            margin-bottom: var(--spacing-xl);
+        }
+        
+        .welcome-card h2 {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: var(--spacing-sm);
+        }
+        
+        .welcome-card p {
+            opacity: 0.95;
+            margin-bottom: var(--spacing-lg);
+            line-height: 1.7;
+        }
+        
+        .example-list {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-sm);
+        }
+        
+        .example-item {
+            background: rgba(255, 255, 255, 0.15);
+            padding: var(--spacing-sm) var(--spacing-md);
+            border-radius: var(--border-radius-sm);
+            font-size: 14px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .example-item:hover {
+            background: rgba(255, 255, 255, 0.25);
+            transform: translateX(4px);
+        }
+        
+        /* ========== Messages ========== */
+        .message {
+            margin-bottom: var(--spacing-lg);
+            animation: slideUp 0.4s ease-out;
+        }
+        
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .message.user {
+            display: flex;
+            justify-content: flex-end;
+        }
+        
+        .message.ai {
+            display: flex;
+            gap: var(--spacing-md);
+            align-items: flex-start;
+        }
+        
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            flex-shrink: 0;
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+            color: white;
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .message-content {
+            background: var(--bg-card);
+            padding: var(--spacing-md) var(--spacing-lg);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-sm);
+            max-width: 85%;
+            border: 1px solid var(--border-color);
+        }
+        
+        .message.user .message-content {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+        }
+        
+        .message.ai .message-content {
+            border-top-left-radius: 4px;
+        }
+        
+        .message.user .message-content {
+            border-top-right-radius: 4px;
+        }
+        
+        /* ========== Progress Indicator ========== */
+        .progress-card {
+            background: linear-gradient(135deg, #FFF9F5, #FFF5ED);
+            border: 1px solid #FFE8DC;
+            padding: var(--spacing-lg);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .progress-title {
+            font-weight: 600;
+            color: var(--accent-color);
+            margin-bottom: var(--spacing-md);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+        }
+        
+        .progress-item {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            padding: var(--spacing-sm) 0;
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+        
+        .progress-icon {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            border: 2px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+        
+        .progress-icon.loading {
+            border-top-color: var(--accent-color);
+            animation: spin 1s linear infinite;
+        }
+        
+        .progress-icon.done {
+            border-color: #52C41A;
+            background: #52C41A;
+            color: white;
+            font-size: 12px;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        /* ========== Plan Content ========== */
+        .plan-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            padding: var(--spacing-xl);
+            box-shadow: var(--shadow-md);
+            line-height: 1.8;
+        }
+        
+        .plan-card h1 {
+            color: var(--primary-color);
+            font-size: 26px;
+            font-weight: 700;
+            margin: var(--spacing-xl) 0 var(--spacing-md);
+            padding-bottom: var(--spacing-md);
+            border-bottom: 3px solid var(--primary-color);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+        }
+        
+        .plan-card h1:first-child {
+            margin-top: 0;
+        }
+        
+        .plan-card h2 {
+            color: var(--text-primary);
+            font-size: 20px;
+            font-weight: 600;
+            margin: var(--spacing-xl) 0 var(--spacing-md);
+            padding-left: var(--spacing-md);
+            border-left: 4px solid var(--accent-color);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+        }
+        
+        .plan-card h3 {
+            color: var(--text-secondary);
+            font-size: 17px;
+            font-weight: 600;
+            margin: var(--spacing-lg) 0 var(--spacing-sm);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-xs);
+        }
+        
+        .plan-card ul, .plan-card ol {
+            margin: var(--spacing-sm) 0 var(--spacing-md) var(--spacing-lg);
+            color: var(--text-secondary);
+        }
+        
+        .plan-card li {
+            margin: var(--spacing-sm) 0;
+            padding-left: var(--spacing-xs);
+        }
+        
+        .plan-card strong {
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+        
+        /* 精美表格样式 */
+        .plan-card table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin: var(--spacing-lg) 0;
+            font-size: 14px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius-sm);
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .plan-card thead {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+            color: white;
+        }
+        
+        .plan-card th {
+            padding: var(--spacing-md) var(--spacing-md);
+            font-weight: 600;
+            text-align: left;
+            border: none;
+            font-size: 14px;
+        }
+        
+        .plan-card td {
+            padding: var(--spacing-md) var(--spacing-md);
+            border-bottom: 1px solid var(--border-color);
+            border-right: 1px solid var(--border-color);
+            color: var(--text-secondary);
+        }
+        
+        .plan-card td:last-child {
+            border-right: none;
+        }
+        
+        .plan-card tbody tr:last-child td {
+            border-bottom: none;
+        }
+        
+        .plan-card tbody tr {
+            transition: background 0.2s;
+        }
+        
+        .plan-card tbody tr:hover {
+            background: var(--bg-hover);
+        }
+        
+        /* 时间轴样式 */
+        .timeline-item {
+            position: relative;
+            padding-left: 40px;
+            margin: var(--spacing-lg) 0;
+            border-left: 2px solid var(--border-color);
+        }
+        
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -8px;
+            top: 0;
+            width: 14px;
+            height: 14px;
+            background: var(--primary-color);
+            border: 3px solid white;
+            border-radius: 50%;
+            box-shadow: 0 0 0 2px var(--primary-color);
+        }
+        
+        .timeline-time {
+            color: var(--primary-color);
+            font-weight: 600;
+            margin-bottom: var(--spacing-xs);
+        }
+        
+        .timeline-content {
+            background: var(--bg-secondary);
+            padding: var(--spacing-md);
+            border-radius: var(--border-radius-sm);
+            margin-bottom: var(--spacing-md);
+        }
+        
+        /* 信息卡片样式 */
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: var(--spacing-md);
+            margin: var(--spacing-md) 0;
+        }
+        
+        .info-card {
+            background: var(--bg-secondary);
+            padding: var(--spacing-md);
+            border-radius: var(--border-radius-sm);
+            border: 1px solid var(--border-color);
+            transition: all 0.2s;
+        }
+        
+        .info-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .info-card-title {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: var(--spacing-xs);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-xs);
+        }
+        
+        .info-card-value {
+            color: var(--primary-color);
+            font-size: 20px;
+            font-weight: 700;
+        }
+        
+        .info-card-desc {
+            color: var(--text-muted);
+            font-size: 13px;
+            margin-top: var(--spacing-xs);
+        }
+        
+        /* 标签样式 */
+        .tag {
+            display: inline-block;
+            padding: 4px 12px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin: 4px 4px 4px 0;
+        }
+        
+        .tag.primary {
+            background: rgba(45, 122, 137, 0.1);
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+        }
+        
+        .tag.accent {
+            background: rgba(255, 155, 113, 0.1);
+            border-color: var(--accent-color);
+            color: var(--accent-color);
+        }
+        
+        /* 价格标签 */
+        .price-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 10px;
+            background: linear-gradient(135deg, #FFE8E0, #FFD4C8);
+            color: #D85B3E;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        
+        /* 提示框样式 */
+        .tip-box {
+            background: linear-gradient(135deg, #FFF9F5, #FFF5ED);
+            border-left: 4px solid var(--accent-color);
+            padding: var(--spacing-md) var(--spacing-lg);
+            border-radius: var(--border-radius-sm);
+            margin: var(--spacing-md) 0;
+        }
+        
+        .tip-box-title {
+            font-weight: 600;
+            color: var(--accent-color);
+            margin-bottom: var(--spacing-xs);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-xs);
+        }
+        
+        /* 图片占位符 */
+        .image-placeholder {
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(135deg, var(--bg-secondary), var(--bg-hover));
+            border-radius: var(--border-radius-sm);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            margin: var(--spacing-md) 0;
+            border: 2px dashed var(--border-color);
+        }
+        
+        .image-placeholder-icon {
+            font-size: 48px;
+            margin-bottom: var(--spacing-sm);
+            opacity: 0.5;
+        }
+        
+        .image-placeholder-text {
+            font-size: 14px;
+        }
+        
+        /* 真实图片展示 */
+        .plan-image {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+            border-radius: var(--border-radius-sm);
+            margin: var(--spacing-md) 0;
+            box-shadow: var(--shadow-md);
+            transition: transform 0.3s;
+        }
+        
+        .plan-image:hover {
+            transform: scale(1.02);
+        }
+        
+        /* 卡片式展示（景点/美食） */
+        .item-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: var(--spacing-lg);
+            margin: var(--spacing-lg) 0;
+        }
+        
+        .item-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            transition: all 0.3s;
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .item-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .item-card-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            background: var(--bg-secondary);
+            transition: opacity 0.5s;
+        }
+        
+        .item-card-image.loading {
+            opacity: 0.7;
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+        
+        .item-card-image.loaded {
+            opacity: 1;
+            animation: none;
+        }
+        
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 0.7;
+            }
+            50% {
+                opacity: 0.9;
+            }
+        }
+        
+        /* Toast动画 */
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translate(-50%, -20px);
+            }
+            to {
+                opacity: 1;
+                transform: translate(-50%, 0);
+            }
+        }
+        
+        @keyframes slideUp {
+            from {
+                opacity: 1;
+                transform: translate(-50%, 0);
+            }
+            to {
+                opacity: 0;
+                transform: translate(-50%, -20px);
+            }
+        }
+        
+        /* 弹窗动画 */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+        
+        @keyframes scaleIn {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+        
+        /* 打印样式 */
+        @media print {
+            .input-area,
+            .header,
+            .action-buttons,
+            .control-buttons {
+                display: none !important;
+            }
+            
+            body {
+                background: white;
+            }
+            
+            .plan-card {
+                box-shadow: none;
+                border: none;
+            }
+        }
+        
+        .item-card-content {
+            padding: var(--spacing-md);
+        }
+        
+        .item-card-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: var(--spacing-xs);
+        }
+        
+        .item-card-desc {
+            color: var(--text-secondary);
+            font-size: 14px;
+            line-height: 1.6;
+            margin-bottom: var(--spacing-sm);
+        }
+        
+        .item-card-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--spacing-xs);
+            margin-top: var(--spacing-sm);
+        }
+        
+        /* 地图容器 */
+        .map-container {
+            width: 100%;
+            height: 400px;
+            border-radius: var(--border-radius-sm);
+            margin: var(--spacing-lg) 0;
+            border: 1px solid var(--border-color);
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .map-placeholder {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #E8F5F7, #D4EDF2);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-color);
+        }
+        
+        .map-placeholder-icon {
+            font-size: 64px;
+            margin-bottom: var(--spacing-md);
+        }
+        
+        .map-placeholder-text {
+            font-size: 16px;
+            font-weight: 600;
+        }
+        
+        .map-link {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--spacing-xs);
+            margin-top: var(--spacing-sm);
+            padding: var(--spacing-xs) var(--spacing-md);
+            background: var(--primary-color);
+            color: white;
+            border-radius: var(--border-radius-sm);
+            text-decoration: none;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+        
+        .map-link:hover {
+            background: var(--primary-light);
+            transform: translateY(-1px);
+        }
+        
+        /* 交互式行程 - 可折叠 */
+        .day-item {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            margin: var(--spacing-md) 0;
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .day-header {
+            padding: var(--spacing-md) var(--spacing-lg);
+            background: linear-gradient(135deg, var(--bg-secondary), white);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: background 0.2s;
+            user-select: none;
+        }
+        
+        .day-header:hover {
+            background: var(--bg-hover);
+        }
+        
+        .day-header-left {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+        }
+        
+        .day-number {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            font-weight: 700;
+        }
+        
+        .day-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        
+        .day-toggle {
+            font-size: 24px;
+            color: var(--text-muted);
+            transition: transform 0.3s;
+        }
+        
+        .day-item.expanded .day-toggle {
+            transform: rotate(180deg);
+        }
+        
+        .day-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease-out;
+        }
+        
+        .day-item.expanded .day-content {
+            max-height: 3000px;
+            transition: max-height 0.5s ease-in;
+        }
+        
+        .day-body {
+            padding: var(--spacing-lg);
+            border-top: 1px solid var(--border-color);
+        }
+        
+        .time-block {
+            margin: var(--spacing-lg) 0;
+        }
+        
+        .time-block-title {
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-bottom: var(--spacing-sm);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-xs);
+        }
+        
+        .activity-item {
+            padding: var(--spacing-sm) 0;
+            padding-left: var(--spacing-lg);
+            border-left: 2px solid var(--border-color);
+            margin: var(--spacing-sm) 0;
+        }
+        
+        /* 控制按钮组 */
+        .control-buttons {
+            display: flex;
+            gap: var(--spacing-sm);
+            margin: var(--spacing-md) 0;
+            flex-wrap: wrap;
+        }
+        
+        .control-btn {
+            padding: var(--spacing-xs) var(--spacing-md);
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius-sm);
+            color: var(--text-secondary);
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .control-btn:hover {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+            transform: translateY(-1px);
+        }
+        
+        .control-btn.accent {
+            background: linear-gradient(135deg, var(--accent-color), #FFB592);
+            color: white;
+            border: none;
+        }
+        
+        .control-btn.accent:hover {
+            transform: translateY(-1px) scale(1.02);
+        }
+        
+        /* 收藏按钮特殊样式 */
+        .control-btn.favorite {
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            color: white;
+            border: none;
+        }
+        
+        .control-btn.favorite:hover {
+            background: linear-gradient(135deg, #FFA500, #FF8C00);
+        }
+        
+        /* 操作按钮组（位于方案顶部） */
+        .action-buttons {
+            display: flex;
+            gap: var(--spacing-sm);
+            margin-bottom: var(--spacing-lg);
+            flex-wrap: wrap;
+            padding: var(--spacing-md);
+            background: var(--bg-secondary);
+            border-radius: var(--border-radius-sm);
+        }
+        
+        /* 分隔线 */
+        .divider {
+            width: 1px;
+            height: 24px;
+            background: var(--border-color);
+            margin: 0 var(--spacing-xs);
+        }
+        
+        /* ========== Input Area ========== */
+        .input-area {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(10px);
+            border-top: 1px solid var(--border-color);
+            padding: var(--spacing-lg) var(--spacing-md);
+            box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.06);
+        }
+        
+        .input-wrapper {
+            max-width: 800px;
+            margin: 0 auto;
+            display: flex;
+            gap: var(--spacing-sm);
+        }
+        
+        #userInput {
+            flex: 1;
+            padding: var(--spacing-md) var(--spacing-lg);
+            background: var(--bg-card);
+            border: 2px solid var(--border-color);
+            border-radius: var(--border-radius-sm);
+            color: var(--text-primary);
+            font-size: 15px;
+            outline: none;
+            transition: all 0.2s;
+            font-family: inherit;
+        }
+        
+        #userInput:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(45, 122, 137, 0.1);
+        }
+        
+        #userInput::placeholder {
+            color: var(--text-muted);
+        }
+        
+        .send-btn {
+            padding: var(--spacing-md) var(--spacing-xl);
+            background: var(--primary-color);
+            border: none;
+            border-radius: var(--border-radius-sm);
+            color: white;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .send-btn:hover:not(:disabled) {
+            background: var(--primary-light);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .send-btn:active:not(:disabled) {
+            transform: translateY(0);
+        }
+        
+        .send-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        /* ========== Error Message ========== */
+        .error-card {
+            background: #FFF2F0;
+            border: 1px solid #FFCCC7;
+            color: #CF1322;
+            padding: var(--spacing-md) var(--spacing-lg);
+            border-radius: var(--border-radius);
+            margin-top: var(--spacing-md);
+        }
+        
+        /* ========== Scrollbar ========== */
+        .chat-container::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .chat-container::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        
+        .chat-container::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border-radius: 3px;
+        }
+        
+        .chat-container::-webkit-scrollbar-thumb:hover {
+            background: var(--text-muted);
+        }
+        
+        /* ========== Responsive ========== */
+        @media (max-width: 768px) {
+            .header {
+                padding: var(--spacing-md);
+            }
+            
+            .logo {
+                font-size: 24px;
+            }
+            
+            .subtitle {
+                font-size: 14px;
+            }
+            
+            .chat-container {
+                padding: var(--spacing-lg) var(--spacing-md) 140px;
+            }
+            
+            .welcome-card {
+                padding: var(--spacing-lg);
+            }
+            
+            .message-content {
+                max-width: 90%;
+            }
+            
+            .plan-card {
+                padding: var(--spacing-lg);
+            }
+            
+            .input-wrapper {
+                flex-direction: column;
+            }
+            
+            .send-btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <div class="header-content">
+            <div class="logo">
+                <div class="logo-icon">✈️</div>
+                Karry旅行家
+            </div>
+            <div class="subtitle">智能定制您的专属旅程</div>
+            <div class="badge">
+                <span>⚡</span>
+                完全免费 · 智能规划
+            </div>
+        </div>
+    </div>
+    
+    <!-- Chat Container -->
+    <div class="chat-container" id="chatContainer">
+        <!-- Welcome Card -->
+        <div class="welcome-card">
+            <h2>👋 欢迎使用 Karry旅行家</h2>
+            <p>告诉我您的旅行想法，我会为您生成详细的旅行方案，包括行程安排、酒店推荐、美食攻略和预算明细。</p>
+            <div class="example-list">
+                <div class="example-item" onclick="fillExample(this.textContent)">
+                    💑 想去马尔代夫度蜜月，预算2万/人，5天行程
+                </div>
+                <div class="example-item" onclick="fillExample(this.textContent)">
+                    👨‍👩‍👧‍👦 带父母去日本，7天，预算1.5万/人，轻松行程
+                </div>
+                <div class="example-item" onclick="fillExample(this.textContent)">
+                    🌌 独自旅行去冰岛看极光，10天，预算3万
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Input Area -->
+    <div class="input-area">
+        <div class="input-wrapper">
+            <input 
+                type="text" 
+                id="userInput" 
+                placeholder="描述您的旅行需求，例如：想去日本东京5天，预算1万元，喜欢美食和动漫..." 
+                onkeypress="handleKeyPress(event)"
+            >
+            <button class="send-btn" id="sendBtn" onclick="sendMessage()">
+                生成方案
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // API 地址
+        const API_BASE = 'http://localhost:3000';
+        
+        // 初始化
+        window.onload = function() {
+            checkBackendHealth();
+        };
+        
+        // 填充示例
+        function fillExample(text) {
+            document.getElementById('userInput').value = text;
+            document.getElementById('userInput').focus();
+        }
+        
+        // 检查后端健康状态
+        async function checkBackendHealth() {
+            try {
+                const response = await fetch(`${API_BASE}/health`);
+                const data = await response.json();
+                
+                console.log('✅ 后端状态:', data);
+                
+                if (data.apis.doubao.includes('❌')) {
+                    addErrorMessage(
+                        '⚠️ 检测到配置问题\n\n' + 
+                        `AI服务: ${data.apis.doubao}\n\n` +
+                        '请检查后端配置文件'
+                    );
+                }
+            } catch (error) {
+                console.error('❌ 无法连接后端:', error);
+                addErrorMessage(
+                    '❌ 无法连接后端服务器\n\n' +
+                    '请确保已启动后端服务：\n' +
+                    'cd travel-planner-doubao\n' +
+                    'node backend/server.js'
+                );
+            }
+        }
+        
+        // 添加AI消息
+        function addAIMessage(text) {
+            const chatContainer = document.getElementById('chatContainer');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'message ai';
+            
+            messageDiv.innerHTML = `
+                <div class="avatar">🤖</div>
+                <div class="message-content">${formatText(text)}</div>
+            `;
+            
+            chatContainer.appendChild(messageDiv);
+            scrollToBottom();
+        }
+        
+        // 添加用户消息
+        function addUserMessage(text) {
+            const chatContainer = document.getElementById('chatContainer');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'message user';
+            
+            messageDiv.innerHTML = `
+                <div class="message-content">${escapeHtml(text)}</div>
+            `;
+            
+            chatContainer.appendChild(messageDiv);
+            scrollToBottom();
+        }
+        
+        // 添加错误消息
+        function addErrorMessage(text) {
+            const chatContainer = document.getElementById('chatContainer');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'message ai';
+            
+            messageDiv.innerHTML = `
+                <div class="avatar">⚠️</div>
+                <div class="message-content">
+                    <div class="error-card">${formatText(text)}</div>
+                </div>
+            `;
+            
+            chatContainer.appendChild(messageDiv);
+            scrollToBottom();
+        }
+        
+        // 显示进度
+        function showProgress() {
+            const chatContainer = document.getElementById('chatContainer');
+            const progressDiv = document.createElement('div');
+            progressDiv.className = 'message ai';
+            progressDiv.id = 'progressIndicator';
+            
+            const steps = [
+                '解析用户需求',
+                'AI 分析目的地信息',
+                '规划行程路线',
+                '生成定制方案'
+            ];
+            
+            let progressHTML = `
+                <div class="avatar">🔍</div>
+                <div class="message-content">
+                    <div class="progress-card">
+                        <div class="progress-title">
+                            <span>⚡</span>
+                            <span>Karry旅行家正在为您生成方案...</span>
+                        </div>
+            `;
+            
+            steps.forEach((step, index) => {
+                progressHTML += `
+                    <div class="progress-item" id="step_${index}">
+                        <div class="progress-icon loading" id="icon_${index}"></div>
+                        <span>${step}</span>
+                    </div>
+                `;
+            });
+            
+            progressHTML += `
+                    </div>
+                </div>
+            `;
+            
+            progressDiv.innerHTML = progressHTML;
+            chatContainer.appendChild(progressDiv);
+            scrollToBottom();
+            
+            return progressDiv;
+        }
+        
+        // 更新进度
+        function updateProgress(index, done = false) {
+            const icon = document.getElementById(`icon_${index}`);
+            if (icon && done) {
+                icon.classList.remove('loading');
+                icon.classList.add('done');
+                icon.innerHTML = '✓';
+            }
+        }
+        
+        // 显示方案
+        function displayPlan(plan, profile = null) {
+            const chatContainer = document.getElementById('chatContainer');
+            const planDiv = document.createElement('div');
+            planDiv.className = 'message ai';
+            
+            const htmlContent = markdownToHTML(plan);
+            
+            // 检查是否有可折叠的日程
+            const hasDays = htmlContent.includes('day-item');
+            
+            // 保存方案数据
+            if (profile) {
+                savePlanData(profile, plan);
+            }
+            
+            // 操作按钮组
+            const actionButtons = `
+                <div class="action-buttons">
+                    <button class="control-btn favorite" onclick="savePlanToLocal()">
+                        <span>☆</span>
+                        <span>收藏方案</span>
+                    </button>
+                    <button class="control-btn" onclick="viewFavorites()">
+                        <span>📚</span>
+                        <span>查看收藏</span>
+                    </button>
+                    <div class="divider"></div>
+                    <button class="control-btn accent" onclick="exportAsHTML()">
+                        <span>📄</span>
+                        <span>导出HTML</span>
+                    </button>
+                    <button class="control-btn" onclick="exportAsMarkdown()">
+                        <span>📝</span>
+                        <span>导出MD</span>
+                    </button>
+                    <button class="control-btn" onclick="copyPlanText()">
+                        <span>📋</span>
+                        <span>复制文本</span>
+                    </button>
+                    <button class="control-btn" onclick="printPlan()">
+                        <span>🖨️</span>
+                        <span>打印</span>
+                    </button>
+                </div>
+            `;
+            
+            // 控制按钮（展开/收起）
+            let controlButtons = '';
+            if (hasDays) {
+                controlButtons = `
+                    <div class="control-buttons">
+                        <button class="control-btn" onclick="expandAllDays()">
+                            <span>📖</span>
+                            <span>展开全部</span>
+                        </button>
+                        <button class="control-btn" onclick="collapseAllDays()">
+                            <span>📕</span>
+                            <span>收起全部</span>
+                        </button>
+                    </div>
+                `;
+            }
+            
+            planDiv.innerHTML = `
+                <div class="avatar">✨</div>
+                <div class="message-content">
+                    <div class="plan-card">
+                        ${actionButtons}
+                        ${controlButtons}
+                        ${htmlContent}
+                    </div>
+                </div>
+            `;
+            
+            chatContainer.appendChild(planDiv);
+            scrollToBottom();
+            
+            // 默认展开第一天
+            if (hasDays) {
+                setTimeout(() => {
+                    const firstDay = document.getElementById('day-1');
+                    if (firstDay) {
+                        firstDay.classList.add('expanded');
+                    }
+                }, 300);
+            }
+        }
+        
+        // Markdown 转 HTML（增强版）
+        function markdownToHTML(markdown) {
+            let html = markdown;
+            
+            // 首先提取目的地信息（用于地图）
+            const destinationMatch = markdown.match(/目的地[：:]\s*([^\n<]+)/);
+            const destination = destinationMatch ? destinationMatch[1].trim() : '';
+            
+            // 处理表格（增强样式）
+            html = html.replace(/\|(.+)\|\n\|[-:\s|]+\|\n((?:\|.+\|\n?)+)/g, function(match, header, body) {
+                const headers = header.split('|').filter(h => h.trim());
+                const rows = body.trim().split('\n');
+                
+                // 判断表格类型
+                const isAttractionTable = headers.some(h => h.includes('景点'));
+                const isFoodTable = headers.some(h => h.includes('餐厅') || h.includes('美食'));
+                const isHotelTable = headers.some(h => h.includes('酒店'));
+                
+                // 如果是景点/美食/酒店表格，转换为卡片式展示
+                if ((isAttractionTable || isFoodTable || isHotelTable) && rows.length <= 6) {
+                    return convertToCards(headers, rows, destination, isAttractionTable ? 'attraction' : isFoodTable ? 'food' : 'hotel');
+                }
+                
+                // 否则使用普通表格
+                let tableHTML = '<table><thead><tr>';
+                headers.forEach(h => {
+                    tableHTML += `<th>${addIcons(h.trim())}</th>`;
+                });
+                tableHTML += '</tr></thead><tbody>';
+                
+                rows.forEach(row => {
+                    const cells = row.split('|').filter(c => c.trim());
+                    if (cells.length > 0) {
+                        tableHTML += '<tr>';
+                        cells.forEach((cell, index) => {
+                            let cellContent = cell.trim();
+                            cellContent = cellContent.replace(/(¥[\d,]+)/g, '<span class="price-tag">💰 $1</span>');
+                            cellContent = cellContent.replace(/(\d+h|\d+小时)/g, '<span class="tag primary">⏱️ $1</span>');
+                            tableHTML += `<td>${cellContent}</td>`;
+                        });
+                        tableHTML += '</tr>';
+                    }
+                });
+                
+                tableHTML += '</tbody></table>';
+                return tableHTML;
+            });
+            
+            // 处理每日行程，转换为可折叠卡片
+            html = convertDaysToCollapsible(html);
+            
+            // 代码块
+            html = html.replace(/```([\s\S]*?)```/g, '<pre><code>$1</code></pre>');
+            
+            // 标题（添加图标）
+            html = html.replace(/^### (.+)$/gm, function(match, title) {
+                return `<h3>${addIcons(title)}</h3>`;
+            });
+            html = html.replace(/^## (.+)$/gm, function(match, title) {
+                const enhanced = addIcons(title);
+                // 如果是行程相关标题，添加地图链接
+                if (title.includes('行程') && destination) {
+                    return `<h2>${enhanced}</h2>${generateMapWidget(destination)}`;
+                }
+                return `<h2>${enhanced}</h2>`;
+            });
+            html = html.replace(/^# (.+)$/gm, function(match, title) {
+                return `<h1>${addIcons(title)}</h1>`;
+            });
+            
+            // 粗体
+            html = html.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+            
+            // 列表项
+            const listItems = [];
+            html = html.replace(/^[*\-] (.+)$/gm, function(match, item) {
+                listItems.push(item);
+                return `<li>${enhanceListItem(item)}</li>`;
+            });
+            html = html.replace(/^(\d+)\. (.+)$/gm, '<li>$2</li>');
+            
+            // 包装列表
+            html = html.replace(/(<li>[\s\S]+?<\/li>)(?:\n|<br>)(?!<li>)/g, '<ul>$1</ul>');
+            
+            // 识别特殊内容块
+            html = enhanceSpecialBlocks(html);
+            
+            // 换行
+            html = html.replace(/\n/g, '<br>');
+            
+            return html;
+        }
+        
+        // 转换表格为卡片（带图片）- 同步渲染，异步加载图片
+        function convertToCards(headers, rows, destination, type) {
+            const nameIndex = headers.findIndex(h => h.includes('名称'));
+            if (nameIndex === -1) return ''; // 如果找不到名称列，返回空
+            
+            // 先生成不带真实图片的卡片
+            let cardsHTML = '<div class="item-grid">';
+            const items = [];
+            
+            rows.forEach(row => {
+                const cells = row.split('|').filter(c => c.trim());
+                if (cells.length === 0) return;
+                
+                const name = cells[nameIndex] ? cells[nameIndex].trim() : '';
+                if (!name) return;
+                
+                items.push({
+                    name,
+                    type,
+                    city: destination,
+                    cells
+                });
+                
+                // 先用占位图
+                const placeholderImage = generateSVGImage(name, type);
+                
+                cardsHTML += `
+                    <div class="item-card" data-name="${name}" data-type="${type}">
+                        <img src="${placeholderImage}" alt="${name}" class="item-card-image loading" loading="lazy">
+                        <div class="item-card-content">
+                            <div class="item-card-title">${name}</div>
+                            <div class="item-card-meta">
+                `;
+                
+                // 添加其他信息作为标签
+                cells.forEach((cell, index) => {
+                    if (index !== nameIndex && cell.trim()) {
+                        let content = cell.trim();
+                        if (content.includes('¥')) {
+                            content = content.replace(/(¥[\d,]+)/g, '<span class="price-tag">💰 $1</span>');
+                            cardsHTML += content;
+                        } else {
+                            cardsHTML += `<span class="tag">${content}</span>`;
+                        }
+                    }
+                });
+                
+                cardsHTML += `
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            cardsHTML += '</div>';
+            
+            // 延迟加载真实图片（在DOM渲染后）
+            if (items.length > 0) {
+                setTimeout(() => {
+                    loadRealImages(items).catch(err => {
+                        console.error('加载真实图片失败:', err);
+                    });
+                }, 100);
+            }
+            
+            return cardsHTML;
+        }
+        
+        // 加载真实图片
+        async function loadRealImages(items) {
+            try {
+                const response = await fetch('/api/search-images', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ items })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success && result.data) {
+                    // 更新图片
+                    result.data.forEach(item => {
+                        if (item.imageUrl && !item.imageUrl.startsWith('data:')) {
+                            const card = document.querySelector(`.item-card[data-name="${item.name}"][data-type="${item.type}"]`);
+                            if (card) {
+                                const img = card.querySelector('img');
+                                if (img) {
+                                    // 预加载图片
+                                    const tempImg = new Image();
+                                    tempImg.onload = function() {
+                                        img.src = item.imageUrl;
+                                        img.classList.remove('loading');
+                                        img.classList.add('loaded');
+                                    };
+                                    tempImg.onerror = function() {
+                                        // 加载失败，保持占位图
+                                        img.classList.remove('loading');
+                                    };
+                                    tempImg.src = item.imageUrl;
+                                }
+                            }
+                        }
+                    });
+                }
+            } catch (error) {
+                console.error('请求图片失败:', error);
+            }
+        }
+        
+        // 生成精美的 SVG 占位图
+        function generateSVGImage(name, type) {
+            let bgGradient = '';
+            let icon = '';
+            let color1 = '';
+            let color2 = '';
+            
+            if (type === 'attraction') {
+                color1 = '%232D7A89';
+                color2 = '%2345A4B8';
+                icon = '🎯';
+            } else if (type === 'food') {
+                color1 = '%23FF9B71';
+                color2 = '%23FFB592';
+                icon = '🍽️';
+            } else if (type === 'hotel') {
+                color1 = '%235C9EAD';
+                color2 = '%237DB9C8';
+                icon = '🏨';
+            }
+            
+            // 使用名称的哈希值生成渐变角度，让每张图不同
+            const hash = name.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+            const angle = hash % 360;
+            
+            const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="800" height="500">
+                <defs>
+                    <linearGradient id="grad${hash}" x1="0%" y1="0%" x2="100%" y2="100%" gradientTransform="rotate(${angle})">
+                        <stop offset="0%" style="stop-color:${color1};stop-opacity:1" />
+                        <stop offset="100%" style="stop-color:${color2};stop-opacity:1" />
+                    </linearGradient>
+                </defs>
+                <rect fill="url(%23grad${hash})" width="800" height="500"/>
+                <text fill="white" font-size="80" font-weight="300" x="50%" y="40%" text-anchor="middle" dy=".3em">${icon}</text>
+                <text fill="white" font-size="28" font-weight="400" x="50%" y="60%" text-anchor="middle" dy=".3em" opacity="0.95">${name}</text>
+            </svg>`;
+            
+            return 'data:image/svg+xml,' + encodeURIComponent(svg);
+        }
+        
+        // 生成地图小部件
+        function generateMapWidget(destination) {
+            const mapURL = `https://www.amap.com/search?query=${encodeURIComponent(destination)}`;
+            return `
+                <div class="map-container">
+                    <div class="map-placeholder">
+                        <div class="map-placeholder-icon">🗺️</div>
+                        <div class="map-placeholder-text">查看 ${destination} 地图</div>
+                        <a href="${mapURL}" target="_blank" class="map-link">
+                            <span>📍</span>
+                            <span>在高德地图中打开</span>
+                        </a>
+                    </div>
+                </div>
+            `;
+        }
+        
+        // 将每日行程转换为可折叠卡片
+        function convertDaysToCollapsible(html) {
+            // 匹配 "### 📍 第X天" 格式
+            const dayPattern = /### 📍 第(\d+)天[：:]?(.+?)(?=###|##|$)/gs;
+            
+            html = html.replace(dayPattern, function(match, dayNum, content) {
+                const dayId = `day-${dayNum}`;
+                return `
+                    <div class="day-item" id="${dayId}">
+                        <div class="day-header" onclick="toggleDay('${dayId}')">
+                            <div class="day-header-left">
+                                <div class="day-number">${dayNum}</div>
+                                <div class="day-title">第${dayNum}天${content.split('\n')[0]}</div>
+                            </div>
+                            <div class="day-toggle">▼</div>
+                        </div>
+                        <div class="day-content">
+                            <div class="day-body">
+                                ${content}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            return html;
+        }
+        
+        // 切换日程展开/折叠
+        function toggleDay(dayId) {
+            const dayItem = document.getElementById(dayId);
+            if (dayItem) {
+                dayItem.classList.toggle('expanded');
+            }
+        }
+        
+        // 展开所有日程
+        function expandAllDays() {
+            const dayItems = document.querySelectorAll('.day-item');
+            dayItems.forEach(item => item.classList.add('expanded'));
+        }
+        
+        // 折叠所有日程
+        function collapseAllDays() {
+            const dayItems = document.querySelectorAll('.day-item');
+            dayItems.forEach(item => item.classList.remove('expanded'));
+        }
+        
+        // ========================================
+        // 收藏和导出功能
+        // ========================================
+        
+        let currentPlan = null; // 当前方案内容
+        let currentProfile = null; // 当前需求信息
+        
+        // 保存当前方案
+        function savePlanData(profile, plan) {
+            currentPlan = plan;
+            currentProfile = profile;
+        }
+        
+        // 收藏方案到本地
+        function savePlanToLocal() {
+            if (!currentPlan || !currentProfile) {
+                alert('没有可收藏的方案！');
+                return;
+            }
+            
+            try {
+                // 从LocalStorage读取已收藏的方案
+                const favorites = JSON.parse(localStorage.getItem('favoritePlans') || '[]');
+                
+                // 生成方案ID
+                const planId = Date.now();
+                const destination = currentProfile.destination || '未知目的地';
+                const days = currentProfile.days || 0;
+                
+                // 添加到收藏列表
+                favorites.push({
+                    id: planId,
+                    destination,
+                    days,
+                    budget: currentProfile.budget,
+                    profile: currentProfile,
+                    plan: currentPlan,
+                    savedAt: new Date().toISOString(),
+                    thumbnail: generateThumbnail()
+                });
+                
+                // 保存到LocalStorage
+                localStorage.setItem('favoritePlans', JSON.stringify(favorites));
+                
+                // 显示成功提示
+                showToast(`✅ 已收藏「${destination} ${days}天」方案！`, 'success');
+                
+                // 更新按钮状态
+                updateFavoriteButton(true);
+                
+            } catch (error) {
+                console.error('收藏失败:', error);
+                showToast('❌ 收藏失败，请重试', 'error');
+            }
+        }
+        
+        // 生成缩略图（提取关键信息）
+        function generateThumbnail() {
+            if (!currentProfile) return '';
+            
+            const { destination, days, budget, keywords } = currentProfile;
+            return `${destination} · ${days}天 · ¥${budget} · ${keywords.join('、')}`;
+        }
+        
+        // 查看收藏列表
+        function viewFavorites() {
+            try {
+                const favorites = JSON.parse(localStorage.getItem('favoritePlans') || '[]');
+                
+                if (favorites.length === 0) {
+                    alert('还没有收藏任何方案哦！');
+                    return;
+                }
+                
+                // 生成收藏列表HTML
+                let html = '<div style="max-height: 60vh; overflow-y: auto;">';
+                html += '<h3 style="margin-bottom: 16px;">📚 我的收藏 (共' + favorites.length + '个)</h3>';
+                
+                favorites.reverse().forEach((fav, index) => {
+                    const date = new Date(fav.savedAt).toLocaleDateString('zh-CN');
+                    html += `
+                        <div style="border: 1px solid #e0e0e0; border-radius: 8px; padding: 12px; margin-bottom: 12px; cursor: pointer;" 
+                             onclick="loadFavoritePlan(${favorites.length - 1 - index})">
+                            <div style="font-weight: 600; color: #2D7A89; margin-bottom: 4px;">
+                                ${fav.destination} ${fav.days}天游
+                            </div>
+                            <div style="font-size: 13px; color: #666; margin-bottom: 8px;">
+                                ${fav.thumbnail}
+                            </div>
+                            <div style="font-size: 12px; color: #999;">
+                                收藏于 ${date}
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                html += '</div>';
+                
+                // 使用自定义弹窗显示
+                showCustomDialog('我的收藏', html);
+                
+            } catch (error) {
+                console.error('读取收藏失败:', error);
+                alert('读取收藏失败！');
+            }
+        }
+        
+        // 加载收藏的方案
+        function loadFavoritePlan(index) {
+            try {
+                const favorites = JSON.parse(localStorage.getItem('favoritePlans') || '[]');
+                const fav = favorites[favorites.length - 1 - index];
+                
+                if (fav) {
+                    currentPlan = fav.plan;
+                    currentProfile = fav.profile;
+                    
+                    // 显示方案
+                    displayPlan(fav.plan);
+                    
+                    // 关闭弹窗
+                    closeCustomDialog();
+                    
+                    showToast('✅ 已加载收藏的方案', 'success');
+                }
+            } catch (error) {
+                console.error('加载方案失败:', error);
+                alert('加载方案失败！');
+            }
+        }
+        
+        // 导出为HTML文件
+        function exportAsHTML() {
+            if (!currentPlan) {
+                showToast('❌ 没有可导出的方案', 'error');
+                return;
+            }
+            
+            const destination = currentProfile?.destination || '旅行';
+            const days = currentProfile?.days || '';
+            const title = `${destination}${days}天旅行方案`;
+            
+            // 构建完整的HTML
+            const htmlContent = `
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>${title}</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            line-height: 1.8;
+            color: #333;
+            padding: 40px 20px;
+            max-width: 900px;
+            margin: 0 auto;
+            background: #f8fafb;
+        }
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        h1 { color: #2D7A89; font-size: 28px; margin: 24px 0 16px; border-bottom: 3px solid #2D7A89; padding-bottom: 12px; }
+        h2 { color: #333; font-size: 22px; margin: 24px 0 12px; padding-left: 12px; border-left: 4px solid #FF9B71; }
+        h3 { color: #666; font-size: 18px; margin: 20px 0 8px; }
+        table { width: 100%; border-collapse: collapse; margin: 16px 0; }
+        th, td { padding: 12px; border: 1px solid #e0e0e0; text-align: left; }
+        th { background: linear-gradient(135deg, #2D7A89, #45A4B8); color: white; font-weight: 600; }
+        tr:hover { background: #f8fafb; }
+        .footer { margin-top: 40px; padding-top: 20px; border-top: 1px solid #e0e0e0; text-align: center; color: #999; font-size: 14px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div style="text-align: center; margin-bottom: 40px;">
+            <h1 style="border: none; font-size: 32px; margin: 0;">✨ ${title}</h1>
+            <p style="color: #666; margin-top: 8px;">由 Karry旅行家 生成</p>
+        </div>
+        ${markdownToHTML(currentPlan)}
+        <div class="footer">
+            <p>导出时间: ${new Date().toLocaleString('zh-CN')}</p>
+            <p style="margin-top: 8px;">Karry旅行家 - 智能定制您的旅程</p>
+        </div>
+    </div>
+</body>
+</html>
+            `;
+            
+            // 创建Blob并下载
+            const blob = new Blob([htmlContent], { type: 'text/html;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${title}.html`;
+            a.click();
+            URL.revokeObjectURL(url);
+            
+            showToast('✅ HTML文件已导出', 'success');
+        }
+        
+        // 导出为Markdown文件
+        function exportAsMarkdown() {
+            if (!currentPlan) {
+                showToast('❌ 没有可导出的方案', 'error');
+                return;
+            }
+            
+            const destination = currentProfile?.destination || '旅行';
+            const days = currentProfile?.days || '';
+            const title = `${destination}${days}天旅行方案`;
+            
+            const mdContent = `# ${title}
+
+> 生成时间: ${new Date().toLocaleString('zh-CN')}  
+> 由 Karry旅行家 智能生成
+
+---
+
+${currentPlan}
+
+---
+
+**Karry旅行家** - 智能定制您的旅程
+            `;
+            
+            // 创建Blob并下载
+            const blob = new Blob([mdContent], { type: 'text/markdown;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${title}.md`;
+            a.click();
+            URL.revokeObjectURL(url);
+            
+            showToast('✅ Markdown文件已导出', 'success');
+        }
+        
+        // 复制方案文本
+        function copyPlanText() {
+            if (!currentPlan) {
+                showToast('❌ 没有可复制的内容', 'error');
+                return;
+            }
+            
+            const destination = currentProfile?.destination || '旅行';
+            const days = currentProfile?.days || '';
+            const title = `${destination}${days}天旅行方案`;
+            
+            const text = `【${title}】\n\n${currentPlan}\n\n---\n由 Karry旅行家 生成`;
+            
+            // 复制到剪贴板
+            navigator.clipboard.writeText(text).then(() => {
+                showToast('✅ 已复制到剪贴板', 'success');
+            }).catch(err => {
+                console.error('复制失败:', err);
+                showToast('❌ 复制失败', 'error');
+            });
+        }
+        
+        // 打印方案
+        function printPlan() {
+            if (!currentPlan) {
+                showToast('❌ 没有可打印的方案', 'error');
+                return;
+            }
+            
+            window.print();
+        }
+        
+        // 显示Toast提示
+        function showToast(message, type = 'info') {
+            const toast = document.createElement('div');
+            toast.className = 'toast toast-' + type;
+            toast.textContent = message;
+            toast.style.cssText = `
+                position: fixed;
+                top: 80px;
+                left: 50%;
+                transform: translateX(-50%);
+                padding: 12px 24px;
+                background: ${type === 'success' ? '#10b981' : type === 'error' ? '#ef4444' : '#3b82f6'};
+                color: white;
+                border-radius: 8px;
+                font-size: 14px;
+                font-weight: 500;
+                z-index: 10000;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+                animation: slideDown 0.3s ease-out;
+            `;
+            
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.style.animation = 'slideUp 0.3s ease-out';
+                setTimeout(() => toast.remove(), 300);
+            }, 2500);
+        }
+        
+        // 自定义弹窗
+        function showCustomDialog(title, content) {
+            const overlay = document.createElement('div');
+            overlay.id = 'customDialog';
+            overlay.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: rgba(0,0,0,0.5);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                z-index: 9999;
+                animation: fadeIn 0.2s;
+            `;
+            
+            const dialog = document.createElement('div');
+            dialog.style.cssText = `
+                background: white;
+                border-radius: 12px;
+                padding: 24px;
+                max-width: 600px;
+                width: 90%;
+                max-height: 80vh;
+                overflow: hidden;
+                box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+                animation: scaleIn 0.2s;
+            `;
+            
+            dialog.innerHTML = `
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                    <h2 style="margin: 0; color: #2D7A89;">${title}</h2>
+                    <button onclick="closeCustomDialog()" style="border: none; background: none; font-size: 24px; cursor: pointer; color: #999;">×</button>
+                </div>
+                ${content}
+            `;
+            
+            overlay.appendChild(dialog);
+            document.body.appendChild(overlay);
+            
+            // 点击背景关闭
+            overlay.addEventListener('click', (e) => {
+                if (e.target === overlay) {
+                    closeCustomDialog();
+                }
+            });
+        }
+        
+        // 关闭弹窗
+        function closeCustomDialog() {
+            const dialog = document.getElementById('customDialog');
+            if (dialog) {
+                dialog.remove();
+            }
+        }
+        
+        // 更新收藏按钮状态
+        function updateFavoriteButton(isFavorited) {
+            const btn = document.querySelector('.control-btn.favorite');
+            if (btn) {
+                if (isFavorited) {
+                    btn.innerHTML = '<span>⭐</span><span>已收藏</span>';
+                } else {
+                    btn.innerHTML = '<span>☆</span><span>收藏方案</span>';
+                }
+            }
+        }
+        
+        // 为标题添加相应图标
+        function addIcons(text) {
+            const iconMap = {
+                '行程': '📅',
+                '第.*天': '📍',
+                '酒店': '🏨',
+                '住宿': '🏨',
+                '美食': '🍽️',
+                '餐厅': '🍽️',
+                '景点': '🎯',
+                '必游': '⭐',
+                '推荐': '👍',
+                '预算': '💰',
+                '费用': '💰',
+                '交通': '🚗',
+                '提示': '💡',
+                '贴士': '💡',
+                '注意': '⚠️',
+                '建议': '📝',
+                '总结': '📊',
+                '概览': '📋'
+            };
+            
+            for (let key in iconMap) {
+                if (new RegExp(key).test(text)) {
+                    return `${iconMap[key]} ${text}`;
+                }
+            }
+            
+            return text;
+        }
+        
+        // 增强列表项
+        function enhanceListItem(item) {
+            // 识别价格
+            item = item.replace(/(¥[\d,]+)/g, '<span class="price-tag">💰 $1</span>');
+            // 识别时间
+            item = item.replace(/(\d+:\d+)/g, '<span class="tag primary">🕐 $1</span>');
+            item = item.replace(/(\d+小时|\d+h)/g, '<span class="tag primary">⏱️ $1</span>');
+            // 识别地址
+            item = item.replace(/(地址[:：].+?)(?=<|$)/g, '<span class="tag">📍 $1</span>');
+            
+            return item;
+        }
+        
+        // 增强特殊内容块
+        function enhanceSpecialBlocks(html) {
+            // 识别提示信息
+            html = html.replace(/💡 (.+?)(?:<br>|$)/g, 
+                '<div class="tip-box"><div class="tip-box-title">💡 温馨提示</div>$1</div>');
+            
+            // 识别重要提醒
+            html = html.replace(/⚠️ (.+?)(?:<br>|$)/g, 
+                '<div class="tip-box" style="border-left-color: #FF9B71;"><div class="tip-box-title" style="color: #FF9B71;">⚠️ 重要提醒</div>$1</div>');
+            
+            return html;
+        }
+        
+        // 格式化文本
+        function formatText(text) {
+            return escapeHtml(text).replace(/\n/g, '<br>');
+        }
+        
+        // HTML 转义
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+        
+        // 发送消息
+        async function sendMessage() {
+            const input = document.getElementById('userInput');
+            const sendBtn = document.getElementById('sendBtn');
+            const text = input.value.trim();
+            
+            if (!text) {
+                alert('请输入您的旅行需求');
+                return;
+            }
+            
+            // 禁用输入
+            input.disabled = true;
+            sendBtn.disabled = true;
+            
+            // 显示用户消息
+            addUserMessage(text);
+            input.value = '';
+            
+            // 显示进度
+            const progressDiv = showProgress();
+            
+            try {
+                // 调用后端 API
+                const response = await fetch(`${API_BASE}/api/generate-plan`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ userInput: text })
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    // 模拟进度更新
+                    for (let i = 0; i < 4; i++) {
+                        await sleep(600);
+                        updateProgress(i, true);
+                    }
+                    
+                    await sleep(400);
+                    
+                    // 移除进度指示器
+                    progressDiv.remove();
+                    
+                    // 显示方案（传递profile信息）
+                    displayPlan(data.data.plan, data.data.profile);
+                    
+                } else {
+                    throw new Error(data.error || '未知错误');
+                }
+                
+            } catch (error) {
+                console.error('❌ 请求失败:', error);
+                progressDiv.remove();
+                
+                addErrorMessage(
+                    `❌ 生成方案失败\n\n` +
+                    `错误信息：${error.message}\n\n` +
+                    `可能原因：\n` +
+                    `1. 后端服务器未启动\n` +
+                    `2. API Key 配置错误\n` +
+                    `3. 网络连接问题\n\n` +
+                    `请检查后端日志获取详细信息。`
+                );
+            } finally {
+                // 恢复输入
+                input.disabled = false;
+                sendBtn.disabled = false;
+                input.focus();
+            }
+        }
+        
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        }
+        
+        function sleep(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+        
+        function scrollToBottom() {
+            const chatContainer = document.getElementById('chatContainer');
+            setTimeout(() => {
+                chatContainer.scrollTop = chatContainer.scrollHeight;
+            }, 100);
+        }
+    </script>
+</body>
+</html>
