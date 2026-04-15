@@ -3,16 +3,35 @@ const fetch = require('node-fetch');
 /**
  * 豆包 API 封装类
  * 文档: https://www.volcengine.com/docs/82379/1099475
+ *
+ * VolcEngine ARK API 使用 AK/SK 认证。
+ * - 当仅提供 accessKey 时，直接以 "Bearer <accessKey>" 形式发送。
+ * - 当同时提供 accessKey 和 secretKey 时，拼接为 "Bearer <accessKey>.<secretKey>"，
+ *   符合 VolcEngine ARK API 的 AK/SK 联合认证格式。
  */
 class DoubaoAPI {
-    constructor(apiKey, endpointId) {
-        this.apiKey = apiKey;
+    constructor(accessKey, endpointId, secretKey) {
+        this.accessKey = accessKey;
+        this.secretKey = secretKey || null;
         this.endpointId = endpointId;
         this.baseURL = 'https://ark.cn-beijing.volces.com/api/v3';
         
         // 请求队列（限制 50次/分钟）
         this.requestQueue = [];
         this.maxRequestsPerMinute = 50;
+    }
+    
+    /**
+     * 构建 Authorization 头
+     * VolcEngine ARK API AK/SK 认证格式：
+     *   - 仅 AK：Bearer <accessKey>
+     *   - AK + SK：Bearer <accessKey>.<secretKey>
+     */
+    _buildAuthHeader() {
+        if (this.secretKey) {
+            return `Bearer ${this.accessKey}.${this.secretKey}`;
+        }
+        return `Bearer ${this.accessKey}`;
     }
     
     /**
@@ -38,7 +57,7 @@ class DoubaoAPI {
             const response = await fetch(url, {
                 method: 'POST',
                 headers: {
-                    'Authorization': `${this.apiKey}`,
+                    'Authorization': this._buildAuthHeader(),
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify(requestBody)
@@ -82,7 +101,7 @@ class DoubaoAPI {
             const response = await fetch(url, {
                 method: 'POST',
                 headers: {
-                    'Authorization': `${this.apiKey}`,
+                    'Authorization': this._buildAuthHeader(),
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify(requestBody)
