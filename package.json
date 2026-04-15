@@ -1,9 +1,9 @@
 {
-  "dependencies": {
-    "axios": "^1.14.0",
-    "cors": "^2.8.5",
-    "dotenv": "^16.3.1",
-    "express": "^4.18.2",
-    "node-fetch": "^2.7.0"
-  }
+  "name": "karry-travel-planner",
+  "version": "1.0.0",
+  "description": "Karry旅行家 - 纯前端版本",
+  "scripts": {
+    "start": "npx serve frontend -p $PORT"
+  },
+  "dependencies": {}
 }
