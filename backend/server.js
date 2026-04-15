@@ -17,32 +17,21 @@ app.use(express.static(path.join(__dirname, '../frontend')));
 
 // 初始化 API
 const doubao = new DoubaoAPI(
-    process.env.DOUBAO_API_KEY,
+    process.env.ARK_API_KEY || process.env.DOUBAO_API_KEY,
     process.env.DOUBAO_ENDPOINT_ID
 );
 const imageSearch = new ImageSearchAPI();
 
 // ========================================
-// 健康检查
+// 健康检查（简化版，不调用外部API）
 // ========================================
-app.get('/health', async (req, res) => {
-    const status = {
+app.get('/health', (req, res) => {
+    res.json({
         status: 'ok',
         timestamp: new Date().toISOString(),
-        apis: {
-            doubao: '未检测'
-        }
-    };
-    
-    // 检查AI服务
-    try {
-        await doubao.chat([{ role: 'user', content: 'hi' }]);
-        status.apis.doubao = '✅ 正常';
-    } catch (error) {
-        status.apis.doubao = `❌ 错误: ${error.message}`;
-    }
-    
-    res.json(status);
+        service: 'Karry旅行家',
+        version: '1.0.0'
+    });
 });
 
 // ========================================
@@ -172,8 +161,8 @@ app.listen(PORT, () => {
     console.log('='.repeat(50) + '\n');
     
     // 检查环境变量
-    if (!process.env.DOUBAO_API_KEY) {
-        console.warn('⚠️ 警告: 未设置 API_KEY');
+    if (!process.env.ARK_API_KEY && !process.env.DOUBAO_API_KEY) {
+        console.warn('⚠️ 警告: 未设置 ARK_API_KEY 或 DOUBAO_API_KEY');
     }
     if (!process.env.DOUBAO_ENDPOINT_ID) {
         console.warn('⚠️ 警告: 未设置 ENDPOINT_ID');
