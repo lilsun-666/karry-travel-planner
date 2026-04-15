@@ -5,9 +5,9 @@ const fetch = require('node-fetch');
  * 文档: https://www.volcengine.com/docs/82379/1099475
  */
 class DoubaoAPI {
-    constructor(apiKey, endpointId) {
+    constructor(apiKey, model) {
         this.apiKey = apiKey;
-        this.endpointId = endpointId;
+        this.model = model;
         this.baseURL = 'https://ark.cn-beijing.volces.com/api/v3';
         
         // 请求队列（限制 50次/分钟）
@@ -24,21 +24,21 @@ class DoubaoAPI {
     async chat(messages, options = {}) {
         await this.checkRateLimit();
         
-        const url = `${this.baseURL}/chat/completions`;
+        const url = `${this.baseURL}/responses`;
         
         const requestBody = {
-            model: this.endpointId,
-            messages: messages,
-            temperature: options.temperature || 0.7,
-            max_tokens: options.maxTokens || 4000,
-            top_p: options.topP || 0.9
+            model: this.model,
+            input: messages.map(m => ({
+                role: m.role,
+                content: [{ type: 'input_text', text: m.content }]
+            }))
         };
         
         try {
             const response = await fetch(url, {
                 method: 'POST',
                 headers: {
-                    'Authorization': `${this.apiKey}`,
+                    'Authorization': `Bearer ${this.apiKey}`,
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify(requestBody)
@@ -54,7 +54,15 @@ class DoubaoAPI {
             // 记录请求时间
             this.requestQueue.push(Date.now());
             
-            return data.choices[0].message.content;
+            // 解析响应
+            if (data.output && data.output.text) {
+                return data.output.text;
+            }
+            if (data.choices && data.choices[0]) {
+                return data.choices[0].message.content;
+            }
+            
+            return JSON.stringify(data);
             
         } catch (error) {
             console.error('❌ 豆包API调用失败:', error.message);
@@ -70,11 +78,14 @@ class DoubaoAPI {
     async chatStream(messages, onChunk) {
         await this.checkRateLimit();
         
-        const url = `${this.baseURL}/chat/completions`;
+        const url = `${this.baseURL}/responses`;
         
         const requestBody = {
-            model: this.endpointId,
-            messages: messages,
+            model: this.model,
+            input: messages.map(m => ({
+                role: m.role,
+                content: [{ type: 'input_text', text: m.content }]
+            })),
             stream: true
         };
         
