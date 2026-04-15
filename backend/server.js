@@ -18,7 +18,8 @@ app.use(express.static(path.join(__dirname, '../frontend')));
 // 初始化 API
 const doubao = new DoubaoAPI(
     process.env.DOUBAO_API_KEY,
-    process.env.DOUBAO_ENDPOINT_ID
+    process.env.DOUBAO_ENDPOINT_ID,
+    process.env.DOUBAO_SECRET_KEY
 );
 const imageSearch = new ImageSearchAPI();
 
@@ -173,9 +174,12 @@ app.listen(PORT, () => {
     
     // 检查环境变量
     if (!process.env.DOUBAO_API_KEY) {
-        console.warn('⚠️ 警告: 未设置 API_KEY');
+        console.warn('⚠️ 警告: 未设置 DOUBAO_API_KEY (Access Key)');
     }
     if (!process.env.DOUBAO_ENDPOINT_ID) {
-        console.warn('⚠️ 警告: 未设置 ENDPOINT_ID');
+        console.warn('⚠️ 警告: 未设置 DOUBAO_ENDPOINT_ID');
+    }
+    if (!process.env.DOUBAO_SECRET_KEY) {
+        console.warn('⚠️ 警告: 未设置 DOUBAO_SECRET_KEY (Secret Key)，将仅使用 Access Key 认证');
     }
 });
