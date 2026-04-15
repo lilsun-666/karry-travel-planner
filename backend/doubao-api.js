@@ -54,10 +54,15 @@ class DoubaoAPI {
             // 记录请求时间
             this.requestQueue.push(Date.now());
             
-            // 解析响应
-            if (data.output && data.output.text) {
-                return data.output.text;
+            // 解析响应 - 新格式
+            if (data.output && Array.isArray(data.output)) {
+                // 找到 type="message" 的项
+                const messageOutput = data.output.find(item => item.type === 'message');
+                if (messageOutput && messageOutput.content && messageOutput.content[0]) {
+                    return messageOutput.content[0].text;
+                }
             }
+            // 兼容旧格式
             if (data.choices && data.choices[0]) {
                 return data.choices[0].message.content;
             }
