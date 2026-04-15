@@ -1119,8 +1119,8 @@
     </div>
 
     <script>
-        // API 地址
-        const API_BASE = 'http://localhost:3000';
+        // API 地址 - 动态获取当前域名
+        const API_BASE = window.location.origin;
         
         // 初始化
         window.onload = function() {
