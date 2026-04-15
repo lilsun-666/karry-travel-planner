@@ -18,7 +18,7 @@ app.use(express.static(path.join(__dirname, '../frontend')));
 // 初始化 API
 const doubao = new DoubaoAPI(
     process.env.ARK_API_KEY || process.env.DOUBAO_API_KEY,
-    process.env.DOUBAO_ENDPOINT_ID
+    process.env.DOUBAO_MODEL || process.env.DOUBAO_ENDPOINT_ID || 'doubao-pro-32k'
 );
 const imageSearch = new ImageSearchAPI();
 
@@ -164,6 +164,7 @@ app.listen(PORT, () => {
     if (!process.env.ARK_API_KEY && !process.env.DOUBAO_API_KEY) {
         console.warn('⚠️ 警告: 未设置 ARK_API_KEY 或 DOUBAO_API_KEY');
     }
+    console.log('📌 使用模型:', process.env.DOUBAO_MODEL || process.env.DOUBAO_ENDPOINT_ID || 'doubao-pro-32k');
     if (!process.env.DOUBAO_ENDPOINT_ID) {
         console.warn('⚠️ 警告: 未设置 ENDPOINT_ID');
     }
