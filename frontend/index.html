@@ -1119,12 +1119,14 @@
     </div>
 
     <script>
-        // API 地址 - 动态获取当前域名
-        const API_BASE = window.location.origin;
+        // 豆包 API 配置（直接在前端调用）
+        const DOUBAO_API_KEY = '26563a50-fc35-4e05-b885-c88ba22b90ca';
+        const DOUBAO_MODEL = 'doubao-seed-2-0-pro-260215';
+        const DOUBAO_API_URL = 'https://ark.cn-beijing.volces.com/api/v3/responses';
         
         // 初始化
         window.onload = function() {
-            checkBackendHealth();
+            console.log('✅ Karry旅行家已加载（纯前端模式）');
         };
         
         // 填充示例
@@ -1133,30 +1135,39 @@
             document.getElementById('userInput').focus();
         }
         
-        // 检查后端健康状态
-        async function checkBackendHealth() {
-            try {
-                const response = await fetch(`${API_BASE}/health`);
-                const data = await response.json();
-                
-                console.log('✅ 后端状态:', data);
-                
-                if (data.apis.doubao.includes('❌')) {
-                    addErrorMessage(
-                        '⚠️ 检测到配置问题\n\n' + 
-                        `AI服务: ${data.apis.doubao}\n\n` +
-                        '请检查后端配置文件'
-                    );
-                }
-            } catch (error) {
-                console.error('❌ 无法连接后端:', error);
-                addErrorMessage(
-                    '❌ 无法连接后端服务器\n\n' +
-                    '请确保已启动后端服务：\n' +
-                    'cd travel-planner-doubao\n' +
-                    'node backend/server.js'
-                );
+        // 直接调用豆包API
+        async function callDoubaoAPI(messages) {
+            const response = await fetch(DOUBAO_API_URL, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${DOUBAO_API_KEY}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    model: DOUBAO_MODEL,
+                    input: messages.map(m => ({
+                        role: m.role,
+                        content: [{ type: 'input_text', text: m.content }]
+                    }))
+                })
+            });
+            
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(`API错误: ${response.status} - ${JSON.stringify(errorData)}`);
             }
+            
+            const data = await response.json();
+            
+            // 解析响应
+            if (data.output && Array.isArray(data.output)) {
+                const messageOutput = data.output.find(item => item.type === 'message');
+                if (messageOutput && messageOutput.content && messageOutput.content[0]) {
+                    return messageOutput.content[0].text;
+                }
+            }
+            
+            return JSON.stringify(data);
         }
         
         // 添加AI消息
@@ -2101,7 +2112,7 @@ ${currentPlan}
             return div.innerHTML;
         }
         
-        // 发送消息
+        // 发送消息（纯前端模式）
         async function sendMessage() {
             const input = document.getElementById('userInput');
             const sendBtn = document.getElementById('sendBtn');
@@ -2124,39 +2135,90 @@ ${currentPlan}
             const progressDiv = showProgress();
             
             try {
-                // 调用后端 API
-                const response = await fetch(`${API_BASE}/api/generate-plan`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ userInput: text })
-                });
-                
-                if (!response.ok) {
-                    throw new Error(`HTTP ${response.status}`);
-                }
-                
-                const data = await response.json();
-                
-                if (data.success) {
-                    // 模拟进度更新
-                    for (let i = 0; i < 4; i++) {
-                        await sleep(600);
-                        updateProgress(i, true);
-                    }
-                    
+                // 构建提示词
+                const systemPrompt = `你是专业的旅行规划师。请根据用户需求，生成一份详细的旅行方案。
+
+**格式要求：**
+
+## 📅 每日详细行程
+
+每天按照以下格式输出：
+
+### 📍 第X天：标题
+
+**上午 (8:00-12:00)**
+- 8:00 酒店早餐
+- 9:00 前往XXX景点
+  - 门票：¥XXX/人
+  - 游玩时间：Xh
+
+**下午 (12:00-18:00)**
+- ...
+
+**晚上 (18:00-22:00)**
+- ...
+
+## 🏨 酒店推荐
+
+以表格形式展示：
+
+| 酒店名称 | 价格/晚 | 位置 | 特色 | 推荐理由 |
+|---|---|---|---|---|
+| XXX酒店 | ¥XXX | XX区 | 五星级 | 适合蜜月 |
+
+## 🍽️ 美食推荐
+
+| 餐厅名称 | 人均消费 | 特色菜品 | 营业时间 | 推荐理由 |
+|---|---|---|---|---|
+| XXX餐厅 | ¥XXX | XX菜系 | 10:00-22:00 | 本地人气 |
+
+## 🎯 景点推荐
+
+| 景点名称 | 门票价格 | 游玩时长 | 最佳时间 | 亮点 |
+|---|---|---|---|---|
+| XXX | ¥XXX | Xh | 上午 | 打卡圣地 |
+
+## 💰 预算明细
+
+| 项目 | 金额 | 说明 |
+|---|---|---|
+| 往返机票 | ¥XXX | XX航空 |
+| 住宿费用 | ¥XXX | X晚 |
+| 餐饮费用 | ¥XXX | X天 |
+| 景点门票 | ¥XXX | 主要景点 |
+| 市内交通 | ¥XXX | 打车+公交 |
+| **总计** | **¥XXX** | **人均预算** |
+
+## 💡 实用贴士
+
+- 📋 **签证办理**：XXX
+- 🌤️ **最佳时间**：XXX
+- 💱 **货币兑换**：XXX
+- ⚠️ **注意事项**：XXX
+
+请严格按照以上格式输出，使用Markdown格式。`;
+
+                // 模拟进度更新
+                for (let i = 0; i < 3; i++) {
                     await sleep(400);
-                    
-                    // 移除进度指示器
-                    progressDiv.remove();
-                    
-                    // 显示方案（传递profile信息）
-                    displayPlan(data.data.plan, data.data.profile);
-                    
-                } else {
-                    throw new Error(data.error || '未知错误');
+                    updateProgress(i, true);
                 }
+                
+                // 调用豆包API
+                const plan = await callDoubaoAPI([
+                    { role: 'system', content: systemPrompt },
+                    { role: 'user', content: `请为以下需求生成旅行方案：${text}` }
+                ]);
+                
+                // 完成进度
+                updateProgress(3, true);
+                await sleep(300);
+                
+                // 移除进度指示器
+                progressDiv.remove();
+                
+                // 显示方案
+                displayPlan(plan);
                 
             } catch (error) {
                 console.error('❌ 请求失败:', error);
@@ -2165,11 +2227,7 @@ ${currentPlan}
                 addErrorMessage(
                     `❌ 生成方案失败\n\n` +
                     `错误信息：${error.message}\n\n` +
-                    `可能原因：\n` +
-                    `1. 后端服务器未启动\n` +
-                    `2. API Key 配置错误\n` +
-                    `3. 网络连接问题\n\n` +
-                    `请检查后端日志获取详细信息。`
+                    `请检查网络连接或稍后重试。`
                 );
             } finally {
                 // 恢复输入
