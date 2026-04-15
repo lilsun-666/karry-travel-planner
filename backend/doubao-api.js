@@ -93,7 +93,7 @@ class DoubaoAPI {
             const response = await fetch(url, {
                 method: 'POST',
                 headers: {
-                    'Authorization': `${this.apiKey}`,
+                    'Authorization': `Bearer ${this.apiKey}`,
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify(requestBody)
